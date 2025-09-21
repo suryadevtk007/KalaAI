@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Artisan Dashboard — KalaAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-clay: #F5F3F0;
+      --bg-card: #FFFFFF;
+      --border-color: #EAEAEA;
+      --gradient: linear-gradient(45deg, #6D28D9, #EC4899, #F59E0B);
+      --accent-violet: #6D28D9;
+      --accent-pink: #EC4899;
+      --text-dark: #111111;
+      --text-muted: #555555;
+      --font-primary: 'Plus Jakarta Sans', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-clay);
+      color: var(--text-dark);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .wrap { max-width: 1200px; margin: auto; padding: 0 20px; }
+    header {
+      position: sticky; top: 0; z-index: 100;
+      padding: 20px 0;
+      background-color: rgba(245, 243, 240, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid transparent;
+    }
+    header .wrap { display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-weight: 800; font-size: 1.8rem; text-decoration: none; color: var(--text-dark); }
+    .brand span {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    nav a { margin: 0 18px; text-decoration: none; color: var(--text-muted); font-weight: 600; }
+    nav a:hover { color: var(--text-dark); }
+    .btn {
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-primary {
+      background: var(--gradient);
+      border: none;
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .hero { padding: 80px 0; text-align: center; }
+    .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
+    .hero p { font-size: 1.2rem; color: var(--text-muted); }
+    .dashboard-section { padding: 60px 0; }
+    .dashboard-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { font-weight: 600; display: block; margin-bottom: 0.5rem; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 12px;
+      border-radius: 12px; border: 1px solid var(--border-color);
+      font-family: var(--font-primary);
+    }
+    .upload-container {
+      border: 2px dashed var(--border-color);
+      padding: 2rem; text-align: center;
+      border-radius: 12px; cursor: pointer;
+      color: var(--text-muted);
+    }
+    .ai-output-section {
+      margin-top: 2rem; padding: 1.5rem;
+      background: var(--bg-clay); border-radius: 12px;
+      display: none;
+    }
+    .ai-output-section img {
+      max-width: 100%; border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    footer { text-align: center; padding: 20px; color: var(--text-muted); }
+    .message-modal {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white; padding: 2rem;
+      border-radius: 12px; display: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      z-index: 1000; text-align: center;
+    }
+    .message-modal.show { display: block; }
+    .modal-backdrop {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none; z-index: 999;
+    }
+    .modal-backdrop.show { display: block; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a href="#" class="brand">Kala<span>AI</span></a>
+      <nav>
+        <a href="#">Home</a>
+        <a href="#">Explore</a>
+        <a href="#">Community</a>
+        <a href="#">About</a>
+      </nav>
+      <a href="#" class="btn btn-primary">Join Now</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>Artisan's Co-pilot</h1>
+      <p>Upload your craft, let KalaAI enhance its story, and discover its market value.</p>
+    </section>
+
+    <section class="dashboard-section">
+      <div class="dashboard-card">
+        <h2>Add New Craft</h2>
+        <form id="product-form">
+          <div class="form-group">
+            <label for="product-name">Product Name</label>
+            <input type="text" id="product-name" required placeholder="e.g., Hand-painted silk saree">
+          </div>
+          <div class="form-group">
+            <label for="product-category">Category</label>
+            <select id="product-category" required>
+              <option value="">-- Select a Category --</option>
+              <option value="textiles">Textiles</option>
+              <option value="pottery">Pottery</option>
+              <option value="painting">Painting</option>
+              <option value="woodwork">Woodwork</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Upload Product Photo</label>
+            <div class="upload-container" id="photo-upload-area">
+              <span>Drag & drop or click to upload</span>
+              <input type="file" id="product-photo" accept="image/*" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Analyze with KalaAI</button>
+        </form>
+
+        <div class="ai-output-section">
+          <h3>AI Analysis Results</h3>
+          <img id="ai-image" src="" alt="Enhanced Craft">
+          <p><strong>Description:</strong> <span id="ai-description"></span></p>
+          <p><strong>Market Insights:</strong> <span id="ai-market-insights"></span></p>
+          <p><strong>Suggested Price:</strong> <span id="ai-price"></span></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 KalaAI — The Future of Craftsmanship</p>
+  </footer>
+
+  <div id="message-modal" class="message-modal">
+    <h3 id="modal-title"></h3>
+    <p id="modal-message"></p>
+  </div>
+  <div id="modal-backdrop" class="modal-backdrop"></div>
+
+  <script>
+    const productForm = document.getElementById('product-form');
+    const aiOutputSection = document.querySelector('.ai-output-section');
+    const aiDescription = document.getElementById('ai-description');
+    const aiMarketInsights = document.getElementById('ai-market-insights');
+    const aiPrice = document.getElementById('ai-price');
+    const aiImage = document.getElementById('ai-image');
+
+    const modal = document.getElementById('message-modal');
+    const backdrop = document.getElementById('modal-backdrop');
+
+    function showModal(title, message) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-message').textContent = message;
+      modal.classList.add('show');
+      backdrop.classList.add('show');
+    }
+    function closeModal() {
+      modal.classList.remove('show');
+      backdrop.classList.remove('show');
+    }
+
+    productForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const productName = document.getElementById('product-name').value;
+      const productCategory = document.getElementById('product-category').value;
+
+      if (!productCategory) {
+        showModal("Error", "Please select a category.");
+        setTimeout(closeModal, 2000);
+        return;
+      }
+
+      showModal("Processing...", "Analyzing your craft with KalaAI...");
+      setTimeout(() => {
+        closeModal();
+        let sampleImage = "";
+        let description = "";
+        let insights = "";
+        let price = "";
+
+        switch (productCategory) {
+          case "textiles":
+            sampleImage = "images/sample-textile.jpg";
+            description = `An intricately crafted textile piece, ${productName}, reflecting both cultural heritage and fine artistry. 
+This fabric showcases traditional weaving methods blended with modern design aesthetics. 
+Its vibrant patterns and durable quality make it a standout choice for sustainable fashion and home décor.`;
+
+            insights = "Textiles are in high demand globally, especially sustainable fabrics.";
+            price = "₹4,500-5,500";
+            break;
+          case "pottery":
+            sampleImage = "images/sample-pottery.jpg";
+           description = `Beautifully designed pottery work titled ${productName}, showcasing the elegance of handmade craftsmanship. 
+The piece highlights natural clay textures combined with smooth finishing techniques. 
+Its timeless design embodies cultural traditions while offering practical utility.`;
+
+            insights = "Pottery has a niche but growing market with focus on handmade designs.";
+            price = "₹2,200-3,000";
+            break;
+          case "painting":
+            sampleImage = "images/sample-painting.jpg";
+           description = `A vibrant painting named ${productName}, filled with expressive colors and artistic detail. 
+The brushwork captures emotion and storytelling, drawing the viewer into its theme. 
+This artwork stands as both a creative expression and a valuable collectible.`;
+
+            insights = "Paintings have strong demand in global art markets, both online and offline.";
+            price = "₹7,000-8,000";
+            break;
+          case "woodwork":
+            sampleImage = "images/sample-woodwork.jpg";
+           description = `Expertly crafted woodwork piece ${productName}, combining skill, precision, and creativity. 
+The natural grain of the wood is preserved, giving it a unique and authentic character. 
+Built to last, it serves as both a functional item and a decorative masterpiece.`;
+
+            insights = "Woodcraft appeals to premium buyers seeking unique handmade furniture.";
+            price = "₹6,500-7,300";
+            break;
+        }
+
+        aiImage.src = sampleImage;
+        aiDescription.textContent = description;
+        aiMarketInsights.textContent = insights;
+        aiPrice.textContent = price;
+        aiOutputSection.style.display = "block";
+      }, 2000);
+    });
+  </script>
+</body>
+</html>
